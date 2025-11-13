@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 
-def grayScaling(frame):
+def vidgrayscaling(frame):
     
     h, w, c = frame.shape
     if c == 3:
