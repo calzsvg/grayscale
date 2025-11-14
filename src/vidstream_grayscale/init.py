@@ -1,1 +1,1 @@
-from .preprocessor import grayScaling
+from .preprocessor import vidgrayscaling
