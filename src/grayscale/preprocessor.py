@@ -193,7 +193,7 @@ def img_resize(image_path, width, height, output_path=None):
 
 
 
-def folder_resize(folder_path, target_width, target_height, output_folder=None):
+def fol_resize(folder_path, target_width, target_height, output_folder=None):
     #주어진 폴더 내의 모든 이미지를 리사이징
 
     # 입력값 검증
