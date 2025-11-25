@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import mediapipe as mp
 
 def grayscale_frame(frame):
     h, w, c = frame.shape
@@ -320,3 +321,33 @@ def is_gray(path, output_folder=None):
              print("결과: 모든 이미지가 컬러입니다.")
         elif gray_count == total_count:
              print("결과: 모든 이미지가 흑백입니다.")
+
+mp_selfie_segmentation = mp.solutions.selfie_segmentation
+segmenter = mp_selfie_segmentation.SelfieSegmentation(model_selection=1)
+
+def remove_background(frame):
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = segmenter.process(frame_rgb)
+    mask = results.segmentation_mask
+    condition = np.stack((mask,) * 3, axis=-1) > 0.5
+    bg_image = np.zeros(frame.shape, dtype=np.uint8)
+    bg_image[:] = (0, 255, 0)
+    output_image = np.where(condition, frame, bg_image)
+    return output_image
+
+def remove_background_img(image_path):
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"파일을 찾을 수 없습니다: {image_path}")
+
+    try:
+        file_array = np.fromfile(image_path, np.uint8)
+        image = cv2.imdecode(file_array, cv2.IMREAD_COLOR)
+    except Exception as e:
+        raise Exception(f"이미지 디코딩 중 오류가 발생했습니다: {e}")
+    
+    if image is None:
+        raise ValueError(f"파일 형식을 확인하세요: {image_path}")
+
+    result_image = remove_background(image)
+    
+    return result_image
