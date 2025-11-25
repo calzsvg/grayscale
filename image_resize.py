@@ -33,11 +33,24 @@ def image_resize(image_path, width, height, output_path=None):
     
     # 이미지 크기 조정
     try:
-        resized_image = cv2.resize(
-            image,
-            (width, height),
-            interpolation=cv2.INTER_AREA
-        )
+        h, w = image.shape[:2]
+        
+        # 비율 계산
+        scale = min(width / w, height / h)
+        new_w, new_h = int(w * scale), int(h * scale)
+        
+        resized_temp = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        
+        # 검은색 배경 생성
+        canvas = np.zeros((height, width, 3), dtype=np.uint8)
+        
+        # 중앙 정렬
+        x_offset = (width - new_w) // 2
+        y_offset = (height - new_h) // 2
+        canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized_temp
+        
+        resized_image = canvas
+
     except Exception as e:
         raise Exception(f"이미지 리사이징 오류: {e}")
 
@@ -106,15 +119,29 @@ def folder_resize(folder_path, target_width, target_height, output_folder=None):
             image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
             if image is None:
-                print(f"[WARN] 이미지 로드 실패 (건너뜀): {filename}")
+                print(f"이미지 로드 실패 (건너뜀): {filename}")
                 continue
-
-            # 이미지 크기 조정
-            resized_image = cv2.resize(
-                image,
-                (target_width, target_height),
-                interpolation=cv2.INTER_AREA
-            )
+            
+            #비율 계산
+            h, w = image.shape[:2]
+        
+            scale = min(target_width / w, target_height / h)
+            new_w, new_h = int(w * scale), int(h * scale)
+            
+        
+            resized_temp = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+            
+            # 검은색 캔버스 생성
+            canvas = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+            
+            # 중앙 좌표 계산
+            x_offset = (target_width - new_w) // 2
+            y_offset = (target_height - new_h) // 2
+            
+    
+            canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized_temp
+            
+            resized_image = canvas
 
             # 저장(한글 경로 지원)
             result, encoded_img = cv2.imencode(extension, resized_image)
@@ -127,6 +154,6 @@ def folder_resize(folder_path, target_width, target_height, output_folder=None):
                 raise IOError(f"인코딩 실패: {filename} - 확장자를 확인해 주세요")
 
         except Exception as e:
-            print(f"[ERROR] {filename} 처리 중 오류 발생: {e}")
+            print(f"{filename} 처리 중 오류 발생: {e}")
 
-    print(f"***리사이징 완료 : {resized_count}개 이미지 저장됨 → {output_folder}***")
+    print(f"리사이징 완료 : {resized_count}개 이미지 저장됨 → {output_folder}")
