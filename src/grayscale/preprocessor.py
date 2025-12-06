@@ -81,7 +81,7 @@ def grayscale_folder(folder_path, output_folder=None):
             image = cv2.imdecode(file_array, cv2.IMREAD_COLOR)
 
             if image is None:
-                print(f"이미지 로드 실패 (건너뜀): {filename}")
+                print(f"이미지 로드에 실패했습니다: {filename}")
                 continue
 
             if len(image.shape) == 2:
@@ -95,10 +95,10 @@ def grayscale_folder(folder_path, output_folder=None):
                     encoded_buffer.tofile(f)
                 converted_count += 1
             else:
-                raise IOError(f"인코딩에 실패했습니다: {filename}")
+                raise IOError(f"이미지 인코딩에 실패했습니다. 확장자와 데이터 형식을 확인해 주십시오. {filename}")
 
         except Exception as e:
-            print(f"[ERROR] {filename} 처리 중 오류가 발생했습니다: {e}")
+            print(f"{filename} 처리 중 오류가 발생했습니다: {e}")
 
     print(f"*** 변환 완료: {converted_count}개 이미지가 저장되었습니다 -> {output_folder} ***")
 
@@ -127,10 +127,10 @@ def resize_image(image_path, width, height, output_path=None):
         img_array = np.fromfile(image_path, np.uint8)
         image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
     except Exception as e:
-        raise Exception(f"이미지 디코딩 오류: {e}")
+        raise Exception(f"이미지 디코딩 중 오류가 발생했습니다: {e}")
 
     if image is None:
-        raise ValueError(f"이미지 로드 실패 :{image_path}")
+        raise ValueError(f"이미지 로드에 실패하였습니다:{image_path}")
     
     # 이미지 크기 조정
     try:
@@ -153,7 +153,7 @@ def resize_image(image_path, width, height, output_path=None):
         resized_image = canvas
 
     except Exception as e:
-        raise Exception(f"이미지 리사이징 오류: {e}")
+        raise Exception(f"파일 처리 중 오류가 발생했습니다: {e}")
 
 
     # 결과 저장 (한글 경로 지원)
@@ -167,7 +167,7 @@ def resize_image(image_path, width, height, output_path=None):
             raise IOError("인코딩 실패, 확장자를 확인하거나, 이미지 데이터를 확인해 주세요")
         
     except Exception as e:
-        raise IOError(f" 저장 실패 {output_path}- {e}")
+        raise IOError(f"파일 저장에 실패했습니다:{output_path}- {e}")
     
 
 #image_resize("sample.jpg",100,100) #잘 돌아가는것 확인
@@ -220,7 +220,7 @@ def resize_folder(folder_path, target_width, target_height, output_folder=None):
             image = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
             if image is None:
-                print(f"이미지 로드 실패 (건너뜀): {filename}")
+                print(f"이미지 로드에 실패하였습니다: {filename}")
                 continue
             
             #비율 계산
@@ -252,10 +252,10 @@ def resize_folder(folder_path, target_width, target_height, output_folder=None):
                     encoded_img.tofile(f)
                 resized_count += 1
             else:
-                raise IOError(f"인코딩 실패: {filename} - 확장자를 확인해 주세요")
+                raise IOError(f"이미지 인코딩에 실패했습니다. 확장자와 데이터 형식을 확인해 주십시오. {filename}")
 
         except Exception as e:
-            print(f"{filename} 처리 중 오류 발생: {e}")
+            print(f"{filename} 처리 중 오류가 발생하였습니다: {e}")
 
     print(f"리사이징 완료 : {resized_count}개 이미지 저장됨 → {output_folder}")
 
