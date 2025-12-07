@@ -1,4 +1,4 @@
-# vidstream-grayscale (OSS Final Project)
+# grayscale (OSS Final Project)
 
 Python 기반 이미지 및 영상 전처리(흑백 변환, 리사이즈, 흑백/컬러 판별, 배경제거)를 제공하는 간단한 유틸리티 모듈입니다.  
 OpenCV, NumPy, MediaPipe를 사용해 이미지나 폴더 단위로 손쉽게 처리할 수 있습니다.  
