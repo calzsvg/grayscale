@@ -1,12 +1,16 @@
 [project]
-name = "oss-finalpj"
+name = "oss-finalpj-grayscale"
 version = "0.1.0"
-description = "Add your description here"
+description = "Image preprocessing utilities for grayscale conversion, resizing, gray/color detection, and background removal."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "mediapipe>=0.10.14",
     "numpy>=2.3.4",
-    "opencv-python-headless>=4.11.0.86",
-    "setuptools>=80.9.0",
+    "opencv-python-headless>=4.11.0.86"
 ]
+[build-system]
+requires = ["setuptools>=80.9.0"]
+build-backend = "setuptools.build_meta"
+[project.urls]
+Repository = "https://github.com/calzsvg/grayscale.git"
