@@ -23,9 +23,6 @@ OpenCV, NumPy, MediaPipe를 사용해 이미지나 폴더 단위로 손쉽게 �
 
 - `resize_image(file_path, target_width, target_height, output_path=None)`
 - `resize_folder(folder_path, target_width, target_height, output_folder=None)`
-- 추가 버전:
-  - `image_resize(image_path, width, height, output_path=None)`
-  - `folder_resize(folder_path, target_width, target_height, output_folder=None)`:contentReference[oaicite:6]{index=6}:contentReference[oaicite:7]{index=7}
 
 특징:
 
