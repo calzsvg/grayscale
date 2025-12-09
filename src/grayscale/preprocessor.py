@@ -3,7 +3,19 @@ import numpy as np
 import os
 import mediapipe as mp
 
+# MediaPipe 설정
+mp_selfie_segmentation = mp.solutions.selfie_segmentation
+segmenter = mp_selfie_segmentation.SelfieSegmentation(model_selection=1)
+
 def grayscale_frame(frame):
+    """
+    입력받은 영상 프레임(numpy array)을 흑백으로 변환하여 반환합니다.
+
+    :param frame: 변환할 원본 프레임 (BGR 또는 BGRA)
+    :type frame: numpy.ndarray
+    :return: 흑백으로 변환된 프레임
+    :rtype: numpy.ndarray
+    """
     h, w, c = frame.shape
     if c == 3:
         return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -13,6 +25,19 @@ def grayscale_frame(frame):
         return frame
 
 def grayscale_image(file_path, output_path=None):
+    """
+    지정된 경로의 이미지 파일을 읽어 흑백으로 변환한 후 저장합니다.
+    
+    경로에 한글이 포함되어 있어도 `numpy`를 이용해 안전하게 로드합니다.
+
+    :param file_path: 변환할 이미지 파일의 절대 혹은 상대 경로
+    :type file_path: str
+    :param output_path: 저장할 파일 경로. None일 경우 원본 파일명 뒤에 ``_gray`` 가 붙습니다.
+    :type output_path: str or None
+    :raises TypeError: 파일 경로가 문자열이 아닐 경우
+    :raises FileNotFoundError: 파일이 존재하지 않을 경우
+    :raises IOError: 인코딩 실패 또는 저장 실패 시
+    """
     if not isinstance(file_path, str):
         raise TypeError("파일 경로는 문자열이어야 합니다.")
 
@@ -51,6 +76,17 @@ def grayscale_image(file_path, output_path=None):
         raise IOError(f"파일 저장에 실패했습니다: {output_path} - {e}")
 
 def grayscale_folder(folder_path, output_folder=None):
+    """
+    폴더 내의 모든 이미지를 일괄적으로 흑백 변환합니다.
+
+    지원하는 확장자: .jpg, .jpeg, .png, .bmp, .tiff, .webp
+
+    :param folder_path: 원본 이미지가 들어있는 폴더 경로
+    :type folder_path: str
+    :param output_folder: 변환된 이미지를 저장할 폴더 경로 (기본값: 원본폴더_gray)
+    :type output_folder: str or None
+    :return: 없음 (변환 결과는 콘솔에 출력됨)
+    """
     if not isinstance(folder_path, str):
         raise TypeError("폴더 경로는 문자열이어야 합니다.")
 
@@ -104,7 +140,21 @@ def grayscale_folder(folder_path, output_folder=None):
 
 
 def resize_image(image_path, width, height, output_path=None):
+    """
+    이미지를 지정된 크기로 리사이징하며, 원본 비율을 유지하고 남는 공간은 검은색으로 채웁니다.
 
+    지정된 너비(width)와 높이(height)의 캔버스 중앙에 리사이즈된 이미지를 배치합니다.
+
+    :param image_path: 원본 이미지 경로
+    :type image_path: str
+    :param width: 목표 너비 (px)
+    :type width: int
+    :param height: 목표 높이 (px)
+    :type height: int
+    :param output_path: 저장 경로 (기본값: 원본명_resized)
+    :type output_path: str or None
+    :raises ValueError: 너비/높이가 0 이하이거나 이미지 로드 실패 시
+    """
     # 입력값 검증 
     if not isinstance(image_path, str):
         raise TypeError("파일 경로는 문자열 이여야 합니다")
@@ -175,8 +225,19 @@ def resize_image(image_path, width, height, output_path=None):
 
 
 def resize_folder(folder_path, target_width, target_height, output_folder=None):
-    #주어진 폴더 내의 모든 이미지를 리사이징
+    """
+    폴더 내 모든 이미지를 지정된 크기로 일괄 리사이징합니다.
+    원본 비율을 유지하며 중앙에 배치하고, 여백은 검은색으로 채웁니다.
 
+    :param folder_path: 원본 폴더 경로
+    :type folder_path: str
+    :param target_width: 목표 너비 (px)
+    :type target_width: int
+    :param target_height: 목표 높이 (px)
+    :type target_height: int
+    :param output_folder: 저장 폴더 경로 (기본값: 원본폴더_resized)
+    :type output_folder: str or None
+    """
     # 입력값 검증
     if not isinstance(folder_path, str):
         raise TypeError("폴더 경로는 문자열이어야 합니다.")
@@ -260,7 +321,19 @@ def resize_folder(folder_path, target_width, target_height, output_folder=None):
     print(f"리사이징 완료 : {resized_count}개 이미지 저장됨 → {output_folder}")
 
 def is_gray(path, output_folder=None):
+    """
+    이미지 또는 폴더가 흑백인지 컬러인지 판별합니다.
+    
+    폴더의 경우 컬러와 흑백이 섞여 있다면 사용자 입력을 통해 
+    분리(Separation) 또는 일괄 변환(Batch Convert)을 선택할 수 있습니다.
 
+    :param path: 검사할 파일 또는 폴더 경로
+    :type path: str
+    :param output_folder: (옵션) 분리 작업 시 파일이 이동될 폴더 경로
+    :type output_folder: str or None
+    :return: 단일 파일일 경우 흑백이면 True, 컬러면 False 반환
+    :rtype: bool or None
+    """
     import shutil 
     
     #경로 확인
@@ -377,10 +450,16 @@ def is_gray(path, output_folder=None):
         elif gray_count == total_count:
              print("결과: 모든 이미지가 흑백입니다.")
 
-mp_selfie_segmentation = mp.solutions.selfie_segmentation
-segmenter = mp_selfie_segmentation.SelfieSegmentation(model_selection=1)
-
 def remove_background(frame):
+    """
+    MediaPipe Selfie Segmentation을 사용하여 인물의 배경을 제거합니다.
+    배경은 녹색(0, 255, 0) 크로마키 색상으로 대체됩니다.
+
+    :param frame: 입력 프레임 (BGR)
+    :type frame: numpy.ndarray
+    :return: 배경이 제거된 이미지
+    :rtype: numpy.ndarray
+    """
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = segmenter.process(frame_rgb)
     mask = results.segmentation_mask
@@ -391,6 +470,15 @@ def remove_background(frame):
     return output_image
 
 def remove_background_img(image_path):
+    """
+    이미지 파일을 읽어 배경을 제거한 이미지를 반환합니다.
+
+    :param image_path: 배경을 제거할 이미지 경로
+    :type image_path: str
+    :return: 배경이 제거된 이미지 데이터 (numpy array)
+    :rtype: numpy.ndarray
+    :raises FileNotFoundError: 파일이 없을 경우
+    """
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"파일을 찾을 수 없습니다: {image_path}")
 
